@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -74,10 +75,15 @@ public class ProductController {
             return ResponseEntity.badRequest().body(errorMessages);
          }
          List<MultipartFile> files = productDto.getFiles();
+         files = files ==null? new ArrayList<MultipartFile>(): files;
+
          for (MultipartFile file : files) {
+            if(file.getSize()==0){
+               continue;
+            }
+
             // Kiểm tra kích thước file
-            long maxSize = 10 * 1024 * 1024; // 10MB
-            if (file.getSize() > maxSize) {
+            if (file.getSize() > 10 * 1024 * 1024) {  // 10MB
                return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
                        .body("File is too large! Maximum size is 10MB");
             }
