@@ -1,6 +1,6 @@
 package com.project.shopapp.controllers;
 
-import com.project.shopapp.dtos.ProductDto;
+import com.project.shopapp.dtos.ProductDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -65,7 +65,7 @@ public class ProductController {
 //   }
 
    @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-   public ResponseEntity<?> createProduct(@Valid ProductDto productDto, BindingResult result) {
+   public ResponseEntity<?> createProduct(@Valid ProductDTO productDto, BindingResult result) {
       try {
          if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors()

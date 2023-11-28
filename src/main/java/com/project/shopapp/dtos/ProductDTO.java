@@ -1,6 +1,5 @@
 package com.project.shopapp.dtos;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -16,7 +15,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductDto {
+public class ProductDTO {
    @NotBlank(message = "Title is required red")
    @Size(min=3, max=200, message = "Title must be between 3 and 200 characters")
    private String name;

@@ -1,6 +1,6 @@
 package com.project.shopapp.controllers;
 
-import com.project.shopapp.dtos.CategoryDto;
+import com.project.shopapp.dtos.CategoryDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -25,7 +25,7 @@ public class CategoryController {
    //nếu tham số truyền vào là 1 object thì sao ? Data Tranfer Obiect = Request Object
    public ResponseEntity<?> insertCategory(@Valid
                                            //<?>: khi kiểu dữ liệu khai báo là String nhưng nhận String+ List String
-                                                @RequestBody CategoryDto categoryDto,
+                                                @RequestBody CategoryDTO categoryDto,
                                                 BindingResult result) {
       if (result.hasErrors()) {
                  List<String> errorMessages=result.getFieldErrors()

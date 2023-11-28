@@ -8,7 +8,7 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryDto {
+public class CategoryDTO {
    @NotEmpty(message = "Category's name cannot be emty")
    private String name;
 
