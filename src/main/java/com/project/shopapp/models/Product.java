@@ -13,6 +13,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Product extends BaseEntity { //chứa tgian tạo-update
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -3,10 +3,7 @@ package com.project.shopapp.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "order_detail")
@@ -14,6 +11,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class OrderDetail {
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +22,7 @@ public class OrderDetail {
    private Order orderId;
 
    @ManyToOne
-   @JoinColumn(name = "order_id")
+   @JoinColumn(name = "product")
    private Product product;
 
    @Column(name = "price", nullable = false)
