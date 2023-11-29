@@ -44,7 +44,7 @@ public class User extends BaseEntity {
    private String googleAccountId;
 
    @ManyToOne
-   @Column(name = "role_id")
+   @JoinColumn(name = "role_id")
    private Role roleId;
 
 }

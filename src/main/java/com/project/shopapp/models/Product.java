@@ -30,6 +30,6 @@ public class Product extends BaseEntity { //chứa tgian tạo-update
    private String description;
 
    @ManyToOne
-   @Column(name = "category_id")
+   @JoinColumn(name = "category_id")
    private Category categoryId;
 }
