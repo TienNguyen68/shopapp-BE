@@ -45,13 +45,14 @@ CREATE TABLE products(
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(350) COMMENT 'Tên sản phẩm',
     price FLOAT NOT NULL CHECK (price >=0),
-    thumbnail VARCHAR(300) DEFAULT,
-    description LONGTEXT DEFAULT,
+    thumbnail VARCHAR(300) DEFAULT '',
+    description VARCHAR(1000) DEFAULT '',
     create_at DATETIME,
     update_at DATETIME,
     category_id INT,
-    FOREIGN KEY(category_id) FOREIGN KEY categories(id)
+    FOREIGN KEY(category_id) REFERENCES categories(id)
 );
+
  CREATE TABLE product_images(
     id INT PRIMARY KEY AUTO_INCREMENT,
     product_id INT,
@@ -60,14 +61,12 @@ CREATE TABLE products(
     FOREIGN KEY(product_id) 
     REFERENCES products (id) ON DELETE CASCADE,
     image_url VARCHAR(300)
- )
-
-
+ );
 
 CREATE TABLE orders(
     id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT,
-    FOREIGN KEY(user_id) REFERENCES user(id),
+    FOREIGN KEY(user_id) REFERENCES users(id),
     fullname VARCHAR(100) DEFAULT '',
     email VARCHAR(100) DEFAULT '',
     phone_number VARCHAR(20) NOT NULL,
@@ -92,15 +91,14 @@ ALTER TABLE orders
 MODIFY COLUMN status ENUM('pending','processing','shipped','delivered','cancelled')
 COMMENT 'Trạng thái đơn hàng';
 
-CREATE TABLE order_details(
+CREATE TABLE order_details (
     id INT PRIMARY KEY AUTO_INCREMENT,
     order_id INT,
     FOREIGN KEY(order_id) REFERENCES orders(id),
     product_id INT,
     FOREIGN KEY(product_id) REFERENCES products(id),
-    price FLOAT CHECK(price >=0),
-    number_of_products INT CHECK(number_of_products >0),
-    total_money FLOAT CHECK(number_of_products >=0),
+    price FLOAT CHECK(price >= 0),
+    number_of_products INT CHECK(number_of_products > 0),
+    total_money FLOAT CHECK(total_money >= 0),
     color VARCHAR(20) DEFAULT ''
 );
-
