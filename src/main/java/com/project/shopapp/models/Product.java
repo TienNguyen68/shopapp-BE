@@ -29,13 +29,7 @@ public class Product extends BaseEntity { //chứa tgian tạo-update
    @Column(name = "description", length = 1000)
    private String description;
 
-
-
    @ManyToOne
    @Column(name = "category_id")
    private Category categoryId;
-
-   private List<MultipartFile> files;
-
-
 }

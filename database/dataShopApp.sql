@@ -17,7 +17,7 @@ CREATE TABLE users(
 
 CREATE TABLE tokens(
     id INT PRIMARY KEY AUTO_INCREMENT,
-    tokens VARCHAR(255) UNIQUE NOT NULL,
+    token VARCHAR(255) UNIQUE NOT NULL,
     token_type VARCHAR(50)NOT NULL,
     expiration_date DATETIME,
     revoked TINYINT(1)NOT NULL,
