@@ -1,8 +1,6 @@
 package com.project.shopapp.controllers;
 
-import com.project.shopapp.dtos.CategoryDTO;
 import com.project.shopapp.dtos.OrderDTO;
-import com.project.shopapp.dtos.UserDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -13,7 +11,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("api/v1/orders")
+@RequestMapping("${api.prefix}/orders") //api/v1 = ${api.prefix}
 public class OrderController {
    @PostMapping("")
    public ResponseEntity<?> createOrder(
