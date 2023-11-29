@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -30,13 +32,13 @@ public class UserDTO {
 
 
    @JsonProperty("date_of_birth")
-   private String dateOfBirth;
+   private Date dateOfBirth;
 
    @JsonProperty("facebook_account_id")
-   private String facebookAccountId;
+   private int facebookAccountId;
 
    @JsonProperty("google_account_id")
-   private String googleAccountId;
+   private int googleAccountId;
 
    @JsonProperty("role_id")
    @NotNull(message = "Role is required")

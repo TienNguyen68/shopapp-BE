@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "users")
 @Getter
@@ -33,16 +35,16 @@ public class User extends BaseEntity {
    private boolean active;
 
    @Column(name = "date_of_birth")
-   private String dateOfBirth;
+   private Date dateOfBirth;
 
    @Column(name = "facebook_account_id")
-   private String facebookAccountId;
+   private int facebookAccountId;
 
    @Column(name = "google_account_id")
-   private String googleAccountId;
+   private int googleAccountId;
 
    @ManyToOne
    @JoinColumn(name = "role_id")
-   private Role roleId;
+   private Role role;
 
 }
