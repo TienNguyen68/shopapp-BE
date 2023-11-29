@@ -1,7 +1,12 @@
 package com.project.shopapp.controllers;
 
 import com.project.shopapp.dtos.ProductDTO;
+import com.project.shopapp.dtos.ProductImageDTO;
+import com.project.shopapp.models.Product;
+import com.project.shopapp.models.ProductImage;
+import com.project.shopapp.services.IProductService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,46 +28,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("${api.prefix}/products")
+@RequiredArgsConstructor
 public class ProductController {
+   private final IProductService productService;
 
-//   @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-//   public ResponseEntity<?> createProduct(@Valid @RequestBody ProductDto productDto,
-////                                          @RequestPart("file") MultipartFile file,
-//                                          BindingResult result
-//   ) {
-//      try {
-//         if (result.hasErrors()) {
-//            List<String> errorMessages = result.getFieldErrors()
-//                    .stream()
-//                    .map(FieldError::getDefaultMessage)
-//                    .toList();
-//            return ResponseEntity.badRequest().body(errorMessages);
-//         }
-//         List<MultipartFile> files = productDto.getFiles();
-//         for (MultipartFile file : files) {
-//            //kiểm tra kích thướt file và định dạng
-//            if (file.getSize() > 10 * 1024 * 1024) { //kích thướt >10Mb
-//               return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
-//                       .body("File is too large! Maximum size is 10MB");
-//            }
-//            String contenType = file.getContentType();
-//            if (contenType == null || !contenType.startsWith("/image/")) {
-//               return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
-//                       .body("File must be an image");
-//            }
-//
-//            //lưu file và cập nhật thumbnail trong DTO
-//            String filename = storeFile(file);  //thay thế hàm này với code của bạn để lưu file
-//            //lưu vào đối tượng product trong DB => làm sau
-//            //lưu vào bảng product_images
-//
-//         }
-//         return ResponseEntity.ok("Product create successfully");
-//      } catch (Exception e) {
-//         return ResponseEntity.badRequest().body(e.getMessage());
-//      }
-//
-//   }
 
    @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
    public ResponseEntity<?> createProduct(@Valid ProductDTO productDto, BindingResult result) {
@@ -74,11 +43,12 @@ public class ProductController {
                     .toList();
             return ResponseEntity.badRequest().body(errorMessages);
          }
+         Product newProduct = productService.createProduct(productDto);
          List<MultipartFile> files = productDto.getFiles();
-         files = files ==null? new ArrayList<MultipartFile>(): files;
+         files = files == null ? new ArrayList<MultipartFile>() : files;
 
          for (MultipartFile file : files) {
-            if(file.getSize()==0){
+            if (file.getSize() == 0) {
                continue;
             }
 
@@ -98,14 +68,19 @@ public class ProductController {
             // Lưu file và cập nhật thumbnail trong DTO
             String filename = storeFile(file);  // Thay thế hàm này với code của bạn để lưu file
             // Lưu vào đối tượng product trong DB => làm sau
-            // Lưu vào bảng product_images
+            ProductImage productImage = productService.createProductImage(
+                    newProduct.getId(),
+                    ProductImageDTO.builder()
+                            .imageUrl(filename)
+                            .build());
          }
+
+
          return ResponseEntity.ok("Product create successfully");
       } catch (Exception e) {
          return ResponseEntity.badRequest().body(e.getMessage());
       }
    }
-
 
 
    private String storeFile(MultipartFile file) throws IOException {
@@ -124,9 +99,6 @@ public class ProductController {
       Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
       return uniqueFilename;
    }
-
-
-
 
 
    @GetMapping("")

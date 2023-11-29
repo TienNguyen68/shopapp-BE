@@ -1,7 +1,7 @@
-package com.project.shopapp.service;
+package com.project.shopapp.services;
 
 import com.project.shopapp.dtos.UserDTO;
-//import com.project.shopapp.exceptions.DataNotFoundException;
+import com.project.shopapp.exceptions.DataNotFoundException;
 import com.project.shopapp.models.Role;
 import com.project.shopapp.models.User;
 import com.project.shopapp.repositories.RoleRepository;
@@ -15,7 +15,7 @@ public class UserService implements IUserService {
    private RoleRepository roleRepository;
 
    @Override
-   public User createUser(UserDTO userDTO) {
+   public User createUser(UserDTO userDTO) throws DataNotFoundException {
       String phoneNumber = userDTO.getPhoneNumber();
 
       //kiểm tra sdt có tồn tại
@@ -35,8 +35,7 @@ public class UserService implements IUserService {
               .build();
 
       Role role = roleRepository.findById(userDTO.getRoleId())
-//              .orElseThrow(() -> new DataNotFoundException("Role không tìm thấy"));
-              .orElseThrow(() -> new RuntimeException("Role khong tim thay"));
+              .orElseThrow(() -> new DataNotFoundException("Role không tìm thấy"));
 
       newUser.setRole(role);
 

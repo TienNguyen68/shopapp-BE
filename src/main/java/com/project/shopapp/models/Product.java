@@ -2,10 +2,6 @@ package com.project.shopapp.models;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table(name = "products")
@@ -32,5 +28,5 @@ public class Product extends BaseEntity { //chứa tgian tạo-update
 
    @ManyToOne
    @JoinColumn(name = "category_id")
-   private Category categoryId;
+   private Category category;
 }
