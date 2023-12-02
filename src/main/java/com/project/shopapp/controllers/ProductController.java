@@ -4,9 +4,14 @@ import com.project.shopapp.dtos.ProductDTO;
 import com.project.shopapp.dtos.ProductImageDTO;
 import com.project.shopapp.models.Product;
 import com.project.shopapp.models.ProductImage;
+import com.project.shopapp.responses.ProductListResponse;
+import com.project.shopapp.responses.ProductResponse;
 import com.project.shopapp.services.IProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -103,7 +108,7 @@ public class ProductController {
    }
 
    private String storeFile(MultipartFile file) throws IOException {
-      if (!isImagesFile(file) || file.getOriginalFilename() == null){
+      if (!isImagesFile(file) || file.getOriginalFilename() == null) {
 //         throw new IOException("Anh khong dung dinh dang");
          String errorMessage = "Anh khong dung dinh dang: " +
                  "isImagesFile: " + isImagesFile(file) +
@@ -133,10 +138,23 @@ public class ProductController {
    }
 
    @GetMapping("")
-   public ResponseEntity<String> getProducts(
+   public ResponseEntity<ProductListResponse> getProducts(
            @RequestParam("page") int page,
-           @RequestParam("limit") int limit) {
-      return ResponseEntity.ok("getProducts here");
+           @RequestParam("limit") int limit
+   ) {
+      // Tạo Pageable từ thông tin trang và giới hạn
+      PageRequest pageRequest = PageRequest.of(
+              page, limit,
+              Sort.by("createAt").descending());
+      Page<ProductResponse> productPage = productService.getAllProducts(pageRequest);
+      // Lấy tổng số trang
+      int totalPages = productPage.getTotalPages();
+      List<ProductResponse> products = productPage.getContent();
+      return ResponseEntity.ok(ProductListResponse
+              .builder()
+              .products(products)
+              .totalPages(totalPages)
+              .build());
    }
 
    @GetMapping("/{id}")
