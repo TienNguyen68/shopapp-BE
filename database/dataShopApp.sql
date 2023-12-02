@@ -102,3 +102,5 @@ CREATE TABLE order_details (
     total_money FLOAT CHECK(total_money >= 0),
     color VARCHAR(20) DEFAULT ''
 );
+
+ALTER TABLE products AUTO_INCREMENT = 1;
