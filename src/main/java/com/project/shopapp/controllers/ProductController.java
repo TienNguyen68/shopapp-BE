@@ -23,6 +23,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 
@@ -33,8 +34,9 @@ public class ProductController {
    private final IProductService productService;
 
 
-   @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-   public ResponseEntity<?> createProduct(@Valid ProductDTO productDto, BindingResult result) {
+   @PostMapping("")
+   public ResponseEntity<?> createProduct(@Valid @RequestBody ProductDTO productDto,
+                                          BindingResult result) {
       try {
          if (result.hasErrors()) {
             List<String> errorMessages = result.getFieldErrors()
@@ -44,8 +46,24 @@ public class ProductController {
             return ResponseEntity.badRequest().body(errorMessages);
          }
          Product newProduct = productService.createProduct(productDto);
-         List<MultipartFile> files = productDto.getFiles();
+         return ResponseEntity.ok(newProduct);
+      } catch (Exception e) {
+         return ResponseEntity.badRequest().body(e.getMessage());
+      }
+   }
+
+   @PostMapping(value = "uploads/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+   public ResponseEntity<?> uploadImages(
+           @PathVariable("id") Long productId,
+           @ModelAttribute("files") List<MultipartFile> files) {
+      try {
+         Product existingProduct = productService.getProductById(productId);
          files = files == null ? new ArrayList<MultipartFile>() : files;
+         if (files.size() > ProductImage.MAXIMUM_IMAGES_PER_PRODUCT) {
+            return ResponseEntity.badRequest().body("Chi upload 5 <= 5 anh");
+
+         }
+         List<ProductImage> productImages = new ArrayList<>();
 
          for (MultipartFile file : files) {
             if (file.getSize() == 0) {
@@ -69,37 +87,50 @@ public class ProductController {
             String filename = storeFile(file);  // Thay thế hàm này với code của bạn để lưu file
             // Lưu vào đối tượng product trong DB => làm sau
             ProductImage productImage = productService.createProductImage(
-                    newProduct.getId(),
+                    existingProduct.getId(),
                     ProductImageDTO.builder()
                             .imageUrl(filename)
-                            .build());
+                            .build()
+            );
+            productImages.add(productImage);
          }
-
-
-         return ResponseEntity.ok("Product create successfully");
+         return ResponseEntity.ok().body(productImages);
       } catch (Exception e) {
          return ResponseEntity.badRequest().body(e.getMessage());
       }
+
+
    }
 
-
    private String storeFile(MultipartFile file) throws IOException {
-      String filename = StringUtils.cleanPath(file.getOriginalFilename());
-      //thêm UUID vào trước tên file để đảm bảo tên là duy nhất
+      if (!isImagesFile(file) || file.getOriginalFilename() == null){
+//         throw new IOException("Anh khong dung dinh dang");
+         String errorMessage = "Anh khong dung dinh dang: " +
+                 "isImagesFile: " + isImagesFile(file) +
+                 ", Original Filename: " + file.getOriginalFilename();
+         throw new IOException(errorMessage);
+      }
+
+      String filename = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+      // Thêm UUID vào trước tên file để đảm bảo tên là duy nhất
       String uniqueFilename = UUID.randomUUID().toString() + "_" + filename;
       //đường dẫn đến thư mục lưu file
       Path uploadDir = Paths.get("uploads");    //Path: dùng của java.nio.file.Path;
-      //kiểm tra và tạo thư mục nếu nó không tồn tại
+      // Kiểm tra và tạo thư mục nếu nó không tồn tại
       if (!Files.exists(uploadDir)) {
          Files.createDirectories(uploadDir);
       }
-      //đường dẫn đầy đủ file
+      // Đường dẫn đầy đủ file
       Path destination = Paths.get(uploadDir.toString(), uniqueFilename);
       //sao chép file vào thư mục đích
       Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
       return uniqueFilename;
    }
 
+   private boolean isImagesFile(MultipartFile file) {
+      String contentType = file.getContentType();
+      return contentType != null && contentType.startsWith("image/");
+   }
 
    @GetMapping("")
    public ResponseEntity<String> getProducts(

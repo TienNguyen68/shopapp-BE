@@ -25,7 +25,7 @@ public class ProductService implements IProductService {
    private final ProductImageRepository productImageRepository;
 
    @Override
-   public Product createProduct(ProductDTO productDTO) throws DataNotFoundException {
+   public Product createProduct(ProductDTO productDTO) throws Exception {
       Category existingCategory = categoryRepository.findById(productDTO.getCategoryId())
               .orElseThrow(() -> new DataNotFoundException
                       ("Không tìm thấy category id = " + productDTO.getCategoryId()));
@@ -88,8 +88,10 @@ public class ProductService implements IProductService {
    public ProductImage createProductImage(
            Long productId,
            ProductImageDTO productImageDTO) throws Exception {
-      Product existingProduct = productRepository.findById(productImageDTO.getProductId())
-              .orElseThrow(() -> new DataNotFoundException
+      Product existingProduct = productRepository
+              .findById(productId)
+              .orElseThrow(() ->
+                      new DataNotFoundException
                       ("Không tìm thấy product id = " + productImageDTO.getProductId()));
       ProductImage newProductImage = ProductImage.builder()
               .product(existingProduct)
@@ -97,8 +99,8 @@ public class ProductService implements IProductService {
               .build();
          //không cho thêm quá 5 ảnh cho 1 sản phẩm
       int size = productImageRepository.findByProductId(productId).size();
-      if (size >= 5) {
-         throw new InvalidParamException("Số ảnh nhỏ hơn hoặc bằng 5");
+      if (size >= ProductImage.MAXIMUM_IMAGES_PER_PRODUCT) {
+         throw new InvalidParamException("Số ảnh nhỏ hơn hoặc bằng " + ProductImage.MAXIMUM_IMAGES_PER_PRODUCT);
       }
       return productImageRepository.save(newProductImage);
    }

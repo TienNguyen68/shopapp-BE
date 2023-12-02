@@ -7,19 +7,17 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @Entity
-@Table(name = "product_image")
+@Table(name = "product_images")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class ProductImage {
+   public static final int MAXIMUM_IMAGES_PER_PRODUCT = 5;
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long id;
-
-   @Column(name = "name", nullable = false, length = 350)
-   private String name;
 
    @ManyToOne
    @JoinColumn(name = "product_id")
