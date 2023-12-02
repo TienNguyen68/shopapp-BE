@@ -1,6 +1,5 @@
 package com.project.shopapp.controllers;
 
-import com.github.javafaker.Faker;
 import com.project.shopapp.dtos.ProductDTO;
 import com.project.shopapp.dtos.ProductImageDTO;
 import com.project.shopapp.models.Product;
@@ -159,15 +158,40 @@ public class ProductController {
    }
 
    @GetMapping("/{id}")
-   public ResponseEntity<String> getProductById(@PathVariable("id") String productId) {
-      return ResponseEntity.ok("Product with ID: " + productId);
+   public ResponseEntity<?> getProductById(@PathVariable("id") Long productId) {
+      try {
+         Product existingProduct = productService.getProductById(productId);
+         return ResponseEntity.ok(ProductResponse.fromProduct(existingProduct));
+      } catch (Exception e) {
+         return ResponseEntity.badRequest().body(e.getMessage());
+      }
    }
 
 
    @DeleteMapping("/{id}")
    public ResponseEntity<String> deleteProduct(@PathVariable Long id) {
-      return ResponseEntity.ok(String.format("Product with id = %d  deleted successfully", id));
+      try {
+         productService.deleteProduct(id);
+         return ResponseEntity.ok(String.format("Product with id = %d  deleted successfully", id));
+
+      } catch (Exception e) {
+         return ResponseEntity.badRequest().body(e.getMessage());
+      }
    }
+
+   @PutMapping("/{id}")
+   public ResponseEntity<?> updateProduct(   //CHƯA LÀM XONG
+           @PathVariable long id,
+           @RequestBody ProductDTO productDTO) {
+      try {
+         Product updateProduct = productService.updateProduct(id,productDTO);
+         return ResponseEntity.ok(updateProduct);
+      } catch (Exception e) {
+         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+      }
+   }
+
+
 
 //   @PostMapping("/generateFakeProducts")
 //   public ResponseEntity<String> generateFakeProducts(){
