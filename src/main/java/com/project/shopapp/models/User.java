@@ -4,8 +4,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -14,7 +20,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class User extends BaseEntity {
+public class User extends BaseEntity implements UserDetails {
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long id;
@@ -48,4 +54,36 @@ public class User extends BaseEntity {
    @JoinColumn(name = "role_id")
    private Role role;
 
+   //BƯỚC 1.1 SECURITY
+   @Override
+   public Collection<? extends GrantedAuthority> getAuthorities() {
+      List<SimpleGrantedAuthority> authorityList = new ArrayList<>();
+      authorityList.add(new SimpleGrantedAuthority("ROLE_"+getRole().getName()));
+      return authorityList;
+   }
+
+   @Override
+   public String getUsername() {
+      return phoneNumber;
+   }
+
+   @Override
+   public boolean isAccountNonExpired() { //account có thời gian vô hạn
+      return true;
+   }
+
+   @Override
+   public boolean isAccountNonLocked() {  //khi chuyển sang optional thì khóa user
+      return true;
+   }
+
+   @Override
+   public boolean isCredentialsNonExpired() {
+      return true;
+   }
+
+   @Override
+   public boolean isEnabled() {  //để false nó khóa user
+      return true;
+   }
 }
