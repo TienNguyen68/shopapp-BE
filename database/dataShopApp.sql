@@ -14,6 +14,14 @@ CREATE TABLE users(
     facebook_account_id INT DEFAULT 0,
     google_account_id INT DEFAULT 0
 );
+ALTER TABLE users ADD COLUMN `role_id` INT;
+
+CREATE TABLE roles(
+id INT PRIMARY KEY,
+ name VARCHAR(20)NOT NULL
+);
+
+ALTER TABLE users ADD FOREIGN KEY(role_id) REFERENCES roles(id);
 
 CREATE TABLE tokens(
     id INT PRIMARY KEY AUTO_INCREMENT,

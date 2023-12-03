@@ -1,14 +1,12 @@
 package com.project.shopapp.models;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Date;
+
+
 
 @Entity
 @Table(name = "orders")
@@ -23,8 +21,8 @@ public class Order {
    @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long id;
 
-   @Column(name = "name", nullable = false)
-   private String name;
+//   @Column(name = "name", nullable = false)
+//   private String name;
 
    @ManyToOne
    @JoinColumn(name = "user_id")
@@ -47,7 +45,7 @@ public class Order {
    private String note;
 
    @Column(name = "order_date", length = 100)
-   private LocalDateTime orderDate;
+   private Date orderDate;
 
    @Column(name = "status")
    private String status;
@@ -62,7 +60,7 @@ public class Order {
    private String shippingAddress;
 
    @Column(name = "shipping_date")
-   private Date shippingDate;
+   private LocalDate shippingDate;
 
    @Column(name = "tracking_number")
    private String trackingNumber;
@@ -71,15 +69,15 @@ public class Order {
    private String paymenMethod;
 
 
+//
+//   @Column(name = "paymen_status")
+//   private String paymenStatus;
 
-   @Column(name = "paymen_status")
-   private String paymenStatus;
-
-   @Column(name = "paymen_date")
-   private Date paymenDate;
+//   @Column(name = "paymen_date")
+//   private Date paymenDate;
 
    @Column(name = "active")
-   private Boolean active;
+   private Boolean active; //thuộc về adm
 
 
 
