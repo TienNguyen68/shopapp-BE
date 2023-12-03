@@ -21,16 +21,16 @@ public class OrderDetailDTO {
    @Min(value = 1, message = "Order ID phải > 0")
    private Long productId;
 
-   @Min(value = 1, message = "Price phải >= 0")
-   private Long price;
+   @Min(value = 0, message = "Price phải >= 0")
+   private Float price;
 
 
-   @JsonProperty("number_of_product")
+   @JsonProperty("number_of_products")
    @Min(value = 1, message = "Số lượng sản phẩm > 0")
-   private int numberOfProduct;
+   private int numberOfProducts;
 
    @JsonProperty("total_money")
-   @Min(value = 1, message = "Tổng tiền >= 0")
+   @Min(value = 0, message = "Tổng tiền >= 0")
       private Float totalMoney;
 
    private String color;

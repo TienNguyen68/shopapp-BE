@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Min;
 import lombok.*;
 
 @Entity
-@Table(name = "order_detail")
+@Table(name = "order_details")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -22,15 +22,15 @@ public class OrderDetail {
    private Order order;
 
    @ManyToOne
-   @JoinColumn(name = "product")
+   @JoinColumn(name = "product_id")
    private Product product;
 
    @Column(name = "price", nullable = false)
    private Float price;
 
 
-   @Column(name = "number_of_product", nullable = false)
-   private int numberOfProduct;
+   @Column(name = "number_of_products", nullable = false)
+   private int numberOfProducts;
 
    @Column(name = "total_money", nullable = false)
    private Float totalMoney;

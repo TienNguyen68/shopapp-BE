@@ -34,7 +34,8 @@ public class OrderDetailService implements IOrderDetailService {
       OrderDetail orderDetail = OrderDetail.builder()
               .order(order)
               .product(product)
-              .numberOfProduct(orderDetailDTO.getNumberOfProduct())
+              .numberOfProducts(orderDetailDTO.getNumberOfProducts())
+              .price(orderDetailDTO.getPrice())
               .totalMoney(orderDetailDTO.getTotalMoney())
               .color(orderDetailDTO.getColor())
               .build();
@@ -48,12 +49,30 @@ public class OrderDetailService implements IOrderDetailService {
    }
 
    @Override
-   public OrderDetail updateOrderDetail(Long id, OrderDetailDTO newOrderDetail) {
-      return null;
+   public OrderDetail updateOrderDetail(Long id, OrderDetailDTO orderDetailDTO) throws DataNotFoundException {
+
+      // Tim xem orderDetail co ton tai
+      OrderDetail existingOrderDetail = orderDetailRepository.findById(id)
+              .orElseThrow(()-> new DataNotFoundException("Khong the tim orderDetail voi id=" +id));
+
+      // OrderId co thuoc order nao khac khong
+      Order existingOrder = orderRepository.findById(orderDetailDTO.getOrderId())
+              .orElseThrow(()-> new DataNotFoundException("Khong the tim Order voi id=" +id));
+
+      //Kiem tra Product cos ton tai
+      Product existingProduct = productRepository.findById(orderDetailDTO.getProductId()).orElseThrow(() -> new DataNotFoundException("Khong tin thay Product voi Id " + orderDetailDTO.getProductId()));
+
+      existingOrderDetail.setPrice(orderDetailDTO.getPrice());
+      existingOrderDetail.setNumberOfProducts(orderDetailDTO.getNumberOfProducts());
+      existingOrderDetail.setTotalMoney(orderDetailDTO.getTotalMoney());
+      existingOrderDetail.setColor(orderDetailDTO.getColor());
+      existingOrderDetail.setOrder(existingOrder);
+      existingOrderDetail.setProduct(existingProduct);
+      return orderDetailRepository.save(existingOrderDetail);
    }
 
    @Override
-   public void deleteOrderDetail(Long id) {
+   public void deleteById(Long id) {
       orderDetailRepository.deleteById(id);
    }
 
