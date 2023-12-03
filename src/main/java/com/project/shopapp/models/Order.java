@@ -26,7 +26,8 @@ public class Order {
 
    @ManyToOne
    @JoinColumn(name = "user_id")
-   private User userId;
+   private User user;
+//   private User userId;
 
    @Column(name = "fullname", length = 100)
    private String fullName;
@@ -51,7 +52,7 @@ public class Order {
    private String status;
 
    @Column(name = "total_money")
-   private Integer totalMoney;
+   private Float totalMoney;
 
    @Column(name = "shipping_method")
    private String shippingMethod;
@@ -65,8 +66,8 @@ public class Order {
    @Column(name = "tracking_number")
    private String trackingNumber;
 
-   @Column(name = "paymen_method")
-   private String paymenMethod;
+   @Column(name = "payment_method")
+   private String paymentMethod;
 
 
 //

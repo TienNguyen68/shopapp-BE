@@ -5,7 +5,7 @@ import com.project.shopapp.exceptions.DataNotFoundException;
 import com.project.shopapp.models.Order;
 import com.project.shopapp.models.OrderSatus;
 import com.project.shopapp.models.User;
-import com.project.shopapp.repositories.OrderReposirory;
+import com.project.shopapp.repositories.OrderRepository;
 import com.project.shopapp.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderService implements IOrderService {
    private final UserRepository userRepository;
-   private final OrderReposirory orderReposirory;
+   private final OrderRepository orderRepository;
    private final ModelMapper modelMapper;
 
 
@@ -39,40 +39,61 @@ public class OrderService implements IOrderService {
       // Cập nhật các trường của đơn hàng từ orderDTO
       Order order = new Order();
       modelMapper.map(orderDTO, order);
-      order.setUserId(user);
+      order.setUser(user);
       order.setOrderDate(new Date());  //thời điểm hiện tại
       order.setStatus(OrderSatus.PENDING);   //mặc định tạo là Pending
 
       //kiểm tra shipping data > ngày hôm nay
       LocalDate shipingDate = orderDTO.getShippingDate() == null
               ? LocalDate.now() : orderDTO.getShippingDate();
-      if(shipingDate.isBefore(LocalDate.now())){
+      if (shipingDate.isBefore(LocalDate.now())) {
          throw new DataNotFoundException("Date must be at least today !");
       }
       order.setShippingDate(shipingDate);
       order.setActive(true);
-      orderReposirory.save(order);
+      orderRepository.save(order);
 
       return order; //ánh xạ order-> OrderResponse
    }
 
    @Override
    public Order getOrder(Long id) {
-      return null;
+      return orderRepository.findById(id).orElseThrow(null);
    }
 
    @Override
-   public Order updateOrder(Long id, OrderDTO orderDTO) {
-      return null;
+   public Order updateOrder(Long id, OrderDTO orderDTO) throws DataNotFoundException {
+      Order order = orderRepository.findById(id).orElseThrow(() ->
+              new DataNotFoundException("Khong tim thay order voi id: " + id));
+
+      User existingUser = userRepository.findById(orderDTO.getUserId()).orElseThrow(()->
+              new DataNotFoundException("Khong tim thay user with id: "+ id));
+
+      // Tạo luồng ánh xạ riêng để kiểm soát ánh xạ
+      modelMapper.typeMap(OrderDTO.class, Order.class)
+              .addMappings(mapper -> mapper.skip(Order::setId));
+
+      // Cập nhật các trường của đơn hàng từ orderDTO
+      modelMapper.map(orderDTO, order);
+      order.setUser(existingUser);
+     return orderRepository.save(order);
    }
 
    @Override
    public void deleteOrder(Long id) {
+      Order order = orderRepository.findById(id).orElse(null);
+      //xóa mềm => cập nhật trường active = false
+
+      if(order != null) {
+         order.setActive(false);
+         orderRepository.save(order);
+
+      }
 
    }
 
    @Override
-   public List<Order> getAllOrders(Long userId) {
-      return null;
+   public List<Order> findByUserId(Long userId) {
+      return orderRepository.findByUserId(userId);
    }
 }
